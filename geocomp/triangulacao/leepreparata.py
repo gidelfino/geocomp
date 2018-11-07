@@ -5,6 +5,7 @@ from geocomp.common.segment import Segment
 from geocomp.common.guiprim import *
 from functools import cmp_to_key
 from geocomp.triangulacao.Treap import Treap
+from geocomp.common.control import *
 
 def Horizontal(edge):
     return edge.a.y == edge.b.y
@@ -122,6 +123,13 @@ def HandleRegularVertex(v, helper, T):
             MostraDiagonal(v, helper[e])
         helper[e] = v
 
+def MostraSweep(p):
+    id = plot_horiz_line(p.y)
+    control.sleep()
+    return id
+
+def EscondeSweep(id):
+    plot_delete(id)
 
 def Events(poly, n):
     p = poly.pts
@@ -144,6 +152,7 @@ def LeePreparata(l):
     T = Treap()
     helper = {}
     for p in Q:
+        sweep_id = MostraSweep(p)
         if Start(p):
             HandleStartVertex(p, helper, T)
         elif End(p):
@@ -154,3 +163,4 @@ def LeePreparata(l):
             HandleMergeVertex(p, helper, T)
         else:
             HandleRegularVertex(p, helper, T)
+        EscondeSweep(sweep_id)
