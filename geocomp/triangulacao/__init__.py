@@ -12,12 +12,14 @@ algoritmo otimo = executa em tempo O(n lg(n)), n = numero de pontos,
 """
 from . import ymonotono
 from . import orelha
+from . import leepreparata
 
 # cada entrada deve ter:
 #  [ 'nome-do-modulo', 'nome-da-funcao', 'nome do algoritmo' ]
 children = [
-	['ymonotono', 'YMonotono', 'Y-Monotono' ],
-	['orelha', 'Orelha', 'Remoção de orelhas' ]
+	['ymonotono', 'YMonotono', 'Y-Monotono'],
+	['orelha', 'Orelha', 'Remoção de orelhas'],
+	['leepreparata', 'LeePreparata', 'Lee e Preparata']
 ]
 
 __all__ = [a[0] for a in children]
