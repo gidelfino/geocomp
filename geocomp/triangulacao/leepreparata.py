@@ -16,20 +16,26 @@ def MostraDiagonal(p, q):
 class SweepLineEdge:
     def __init__(self, a, b):
         # Arrumar ordem?
-        self.a = a
-        self.b = b
+
+        if a.y > b.y or (a.y == b.y and a.x < b.x):
+            self.a = b
+            self.b = a
+        else:
+            self.a = a
+            self.b = b
 
     def __lt__(self, other):
-        if Horizontal(other):
-            if(Horizontal(self)):
-                return self.a.y < other.a.y
-            return left(self.a, self.b, other.a)
-        elif Horizontal(self):
-            return left(self.a, self.b, other.a)
-        elif self.a.y < other.a.y:
-            return left(other.a, other.b, self.a)
-        else:
-            return left(self.a, self.b, other.a)
+        # if Horizontal(other):
+        #     if(Horizontal(self)):
+        #         return self.a.y < other.a.y
+        #     return left(self.a, self.b, other.a)
+        # elif Horizontal(self):
+        #     return left(self.a, self.b, other.a)
+        # elif self.a.y < other.a.y:
+        #     return left(other.a, other.b, self.a)
+        # else:
+        #     return left(self.a, self.b, other.a)
+        return left(other.a, other.b, self.a)
 
     def __eq__(self, other):
         return self.a == other.a and self.b == other.b
