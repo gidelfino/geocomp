@@ -5,18 +5,15 @@ from geocomp.common.segment import Segment
 from geocomp.common.guiprim import *
 from functools import cmp_to_key
 from geocomp.triangulacao.Treap import Treap
+from geocomp.triangulacao.DCEL import DCEL
 from geocomp.common.control import *
-
-def Horizontal(edge):
-    return edge.a.y == edge.b.y
+from geocomp.triangulacao.ymonotono import YMonotono
 
 def MostraDiagonal(p, q):
-    Segment(p, q).hilight()
+    Segment(p, q).hilight(color_line='white')
 
 class SweepLineEdge:
     def __init__(self, a, b):
-        # Arrumar ordem?
-
         if a.y > b.y or (a.y == b.y and a.x < b.x):
             self.a = b
             self.b = a
@@ -25,17 +22,7 @@ class SweepLineEdge:
             self.b = b
 
     def __lt__(self, other):
-        # if Horizontal(other):
-        #     if(Horizontal(self)):
-        #         return self.a.y < other.a.y
-        #     return left(self.a, self.b, other.a)
-        # elif Horizontal(self):
-        #     return left(self.a, self.b, other.a)
-        # elif self.a.y < other.a.y:
-        #     return left(other.a, other.b, self.a)
-        # else:
-        #     return left(self.a, self.b, other.a)
-        return left(other.a, other.b, self.a)
+        return left(other.a, other.b, self.a) and left(other.a, other.b, self.b) or right(self.a, self.b, other.a) and right(self.a, self.b, other.b)
 
     def __eq__(self, other):
         return self.a == other.a and self.b == other.b
@@ -54,7 +41,6 @@ def Above(p, q):
     if p.y != q.y:
         return p.y > q.y
     return p.x < q.x
-
 
 def Start(v):
     "Um vertice v eh start se seus dois vizinhos estao abaixo e o angulo interior em v eh < pi"
@@ -80,44 +66,49 @@ def Merge(v):
     w = v.next
     return Above(u, v) and Above(w, v) and not left(v, w, u)
 
-def HandleStartVertex(v, helper, T):
+def HandleStartVertex(v, helper, T, D):
     e = SweepLineEdge(v, v.next)
     T.insert(e)
     helper[e] = v
 
-def HandleEndVertex(v, helper, T):
+def HandleEndVertex(v, helper, T, D):
     e = SweepLineEdge(v.prev, v)
     if Merge(helper[e]):
         # adiciona segmento v, helper[e]
         MostraDiagonal(v, helper[e])
+        D.add_edge(v, helper[e])
     T.erase(e)
 
-def HandleSplitVertex(v, helper, T):
+def HandleSplitVertex(v, helper, T, D):
     e = T.lower_bound(SweepLineEdge(v, v))
     # insere diagonal v, helper[e]
     MostraDiagonal(v, helper[e])
+    D.add_edge(v, helper[e])
     helper[e] = v
     e = SweepLineEdge(v, v.next)
     T.insert(e)
     helper[e] = v
 
-def HandleMergeVertex(v, helper, T):
+def HandleMergeVertex(v, helper, T, D):
     e = SweepLineEdge(v.prev, v)
     if Merge(helper[e]):
         #insere diagonal v helper[e]
         MostraDiagonal(v, helper[e])
+        D.add_edge(v, helper[e])
     T.erase(e)
     e = T.lower_bound(SweepLineEdge(v, v))
     if Merge(helper[e]):
         MostraDiagonal(v, helper[e])
+        D.add_edge(v, helper[e])
     helper[e] = v
 
-def HandleRegularVertex(v, helper, T):
+def HandleRegularVertex(v, helper, T, D):
     if Below(v, v.prev): # interior do poligono esta a direta de v
         e = SweepLineEdge(v.prev, v)
         if Merge(helper[e]):
             #diagonal v, helper[e]
             MostraDiagonal(v, helper[e])
+            D.add_edge(v, helper[e])
         T.erase(e)
         e = SweepLineEdge(v, v.next)
         T.insert(e)
@@ -127,6 +118,7 @@ def HandleRegularVertex(v, helper, T):
         if Merge(helper[e]):
             #diagonal v, helper[e]
             MostraDiagonal(v, helper[e])
+            D.add_edge(v, helper[e])
         helper[e] = v
 
 def MostraSweep(p):
@@ -156,17 +148,21 @@ def LeePreparata(l):
     n = len(l)
     Q = Events(poly, n)
     T = Treap()
+    D = DCEL(poly)
     helper = {}
     for p in Q:
         sweep_id = MostraSweep(p)
         if Start(p):
-            HandleStartVertex(p, helper, T)
+            HandleStartVertex(p, helper, T, D)
         elif End(p):
-            HandleEndVertex(p, helper, T)
+            HandleEndVertex(p, helper, T, D)
         elif Split(p):
-            HandleSplitVertex(p, helper, T)
+            HandleSplitVertex(p, helper, T, D)
         elif Merge(p):
-            HandleMergeVertex(p, helper, T)
+            HandleMergeVertex(p, helper, T, D)
         else:
-            HandleRegularVertex(p, helper, T)
+            HandleRegularVertex(p, helper, T, D)
         EscondeSweep(sweep_id)
+
+    for poly in D.to_polygons():
+        YMonotono(poly)
