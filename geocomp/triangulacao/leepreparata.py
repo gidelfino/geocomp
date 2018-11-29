@@ -165,4 +165,4 @@ def LeePreparata(l):
         EscondeSweep(sweep_id)
 
     for poly in D.to_polygons():
-        YMonotono(poly)
+        YMonotono(poly, print_polygon=False)

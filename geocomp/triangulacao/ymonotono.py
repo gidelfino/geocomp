@@ -22,20 +22,11 @@ def mostra_diagonal(v, w):
     print(v.x, ' ', v.y, ' ', w.x, ' ', w.y)
     Segment(v, w).hilight()
 
-
-def test_angle(a, b, c):
-    dab = sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y))
-    dbc = sqrt((b.x - c.x) * (b.x - c.x) + (b.y - c.y) * (b.y - c.y))
-    dac = sqrt((a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y))
-    angle = acos((dab * dab + dbc * dbc - dac * dac)/(2 * dab * dbc))
-    if (angle < 3.14159265359):
-        return True
-    return False
-
-def YMonotono (l):
+def YMonotono (l, print_polygon = True):
     "Algoritmo Triangulacao de Poligono Y-Monotono para uma lista l de pontos"
-    pol = Polygon(l)
-    pol.plot()
+    if print_polygon:
+        pol = Polygon(l)
+        pol.plot()
     n = len(l)
     p = [i for i in range(n)]
 
@@ -63,7 +54,6 @@ def YMonotono (l):
             print('back ', b, ' front ', f)
             if (is_adj(p[i], b, n) and not is_adj(p[i], f, n)):
                 print('Case 1')
-                # while (sz > 1 and test_angle(l[p[i]], l[st[sz - 1]], l[st[sz - 2]])):
                 while (sz > 1):
                     b = st[sz - 1]
                     c = st[sz - 2]
