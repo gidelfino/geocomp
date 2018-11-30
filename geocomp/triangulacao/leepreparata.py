@@ -12,6 +12,17 @@ from geocomp.triangulacao.ymonotono import YMonotono
 def MostraDiagonal(p, q):
     Segment(p, q).hilight(color_line='white')
 
+
+""" 
+Uma aresta do poligono que intersecta a linha de varredura 
+A aresta é orientada de baixo para cima.
+    b
+    ^
+    |
+    |
+    |
+    a
+"""
 class SweepLineEdge:
     def __init__(self, a, b):
         if a.y > b.y or (a.y == b.y and a.x < b.x):
@@ -20,9 +31,6 @@ class SweepLineEdge:
         else:
             self.a = a
             self.b = b
-
-    def __lt__(self, other):
-        return left(other.a, other.b, self.b)
 
     def __eq__(self, other):
         return self.a == other.a and self.b == other.b
@@ -68,35 +76,32 @@ def Merge(v):
 
 def HandleStartVertex(v, helper, T, D):
     e = SweepLineEdge(v, v.next)
-    T.insert(e)
+    T.insert(e, v)
     helper[e] = v
 
 def HandleEndVertex(v, helper, T, D):
     e = SweepLineEdge(v.prev, v)
     if Merge(helper[e]):
-        # adiciona segmento v, helper[e]
         MostraDiagonal(v, helper[e])
         D.add_edge(v, helper[e])
-    T.erase(e)
+    T.erase(e, v)
 
 def HandleSplitVertex(v, helper, T, D):
-    e = T.lower_bound(SweepLineEdge(v, v))
-    # insere diagonal v, helper[e]
+    e = T.lower_bound(v)
     MostraDiagonal(v, helper[e])
     D.add_edge(v, helper[e])
     helper[e] = v
     e = SweepLineEdge(v, v.next)
-    T.insert(e)
+    T.insert(e, v)
     helper[e] = v
 
 def HandleMergeVertex(v, helper, T, D):
     e = SweepLineEdge(v.prev, v)
     if Merge(helper[e]):
-        #insere diagonal v helper[e]
         MostraDiagonal(v, helper[e])
         D.add_edge(v, helper[e])
-    T.erase(e)
-    e = T.lower_bound(SweepLineEdge(v, v))
+    T.erase(e, v)
+    e = T.lower_bound(v)
     if Merge(helper[e]):
         MostraDiagonal(v, helper[e])
         D.add_edge(v, helper[e])
@@ -106,17 +111,15 @@ def HandleRegularVertex(v, helper, T, D):
     if Below(v, v.prev): # interior do poligono esta a direta de v
         e = SweepLineEdge(v.prev, v)
         if Merge(helper[e]):
-            #diagonal v, helper[e]
             MostraDiagonal(v, helper[e])
             D.add_edge(v, helper[e])
-        T.erase(e)
+        T.erase(e, v)
         e = SweepLineEdge(v, v.next)
-        T.insert(e)
+        T.insert(e, v)
         helper[e] = v
     else:
-        e = T.lower_bound(SweepLineEdge(v, v))
+        e = T.lower_bound(v)
         if Merge(helper[e]):
-            #diagonal v, helper[e]
             MostraDiagonal(v, helper[e])
             D.add_edge(v, helper[e])
         helper[e] = v

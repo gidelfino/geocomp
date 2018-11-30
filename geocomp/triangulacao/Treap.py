@@ -2,17 +2,30 @@
 # -*- coding : utf-8 -*-
 
 import random
+from geocomp.common.guiprim import left as esquerda
+from geocomp.common.segment import Segment
 
 def random_integer():
     return random.randint(1, 1e9)
 
+def AcendeAresta(e):
+    Segment(e.a, e.b).hilight(color_line='purple')
+
+def ApagaAresta(e):
+    Segment(e.a, e.b).hilight(color_line='red')
+
 class TreapNode:
-    def __init__(self, key, priority):
-        self.key = key
+    def __init__(self, edge, priority):
+        self.edge = edge
         self.priority = priority
         self.left = None
         self.right = None
 
+""" 
+Árvore balanceada para guardar a linha de varredura
+Guarda segmentos em seus nós, porém recebe um ponto para
+comparar com os segmentos na inserção/remoção.
+"""
 class Treap:
     def __init__(self):
         self._root = None
@@ -20,7 +33,7 @@ class Treap:
     def _split(self, tree, key):
         if tree == None:
             return (None, None)
-        if key < tree.key:
+        if esquerda(tree.edge.a, tree.edge.b, key): # ponto esta para a esquerda do segmento
             left, tree.left = self._split(tree.left, key)
             return (left, tree)
         else:
@@ -39,41 +52,30 @@ class Treap:
             left.right = self._merge(left.right, right)
             return left
 
-    def contains(self, key):
-        node = self._root
-        while node != None:
-            if key == node.key:
-                return True
-            if key < node.key:
-                node = node.left
-            else:
-                node = node.right
-        return False
+    def insert(self, edge, key):
+        AcendeAresta(edge)
+        node = TreapNode(edge, random_integer())
+        left, right = self._split(self._root, key)
+        self._root = self._merge(self._merge(left, node), right)
 
-    def insert(self, key):
-        if not self.contains(key):
-            node = TreapNode(key, random_integer())
-            left, right = self._split(self._root, key)
-            self._root = self._merge(self._merge(left, node), right)
-
-    def _erase_r(self, tree, key):
-        if key == tree.key:
+    def _erase_r(self, tree, edge, key):
+        if edge == tree.edge:
             return self._merge(tree.left, tree.right)
-        if key < tree.key:
-            tree.left = self._erase_r(tree.left, key)
+        if esquerda(tree.edge.a, tree.edge.b, key): # ponto esta para a esquerda do segmento
+            tree.left = self._erase_r(tree.left, edge, key)
             return tree
         else:
-            tree.right = self._erase_r(tree.right, key)
+            tree.right = self._erase_r(tree.right, edge, key)
             return tree
 
-    def erase(self, key):
-        if self.contains(key):
-            self._root = self._erase_r(self._root, key)
+    def erase(self, edge, key):
+        ApagaAresta(edge)
+        self._root = self._erase_r(self._root, edge, key)
 
     def _lower_bound_r(self, tree, key):
         if tree == None:
             return None
-        if key < tree.key: #key == tree.key tambem?
+        if esquerda(tree.edge.a, tree.edge.b, key): # ponto esta para a esquerda do segmento
             return self._lower_bound_r(tree.left, key)
         node = self._lower_bound_r(tree.right, key)
         if node != None:
@@ -85,22 +87,4 @@ class Treap:
         node = self._lower_bound_r(self._root, key)
         if node == None:
             return None
-        return node.key
-
-
-if __name__ == '__main__':
-    t = Treap()
-    t.insert(1)
-    t.insert(2)
-    t.insert(6)
-    assert t.contains(2)
-    assert not t.contains(4)
-    t.erase(2)
-    assert not t.contains(2)
-    assert t.contains(6)
-    assert t.lower_bound(7) == 6
-    assert t.lower_bound(6) == 6
-    assert t.lower_bound(5) == 1
-    t.insert(2)
-    assert t.lower_bound(5) == 2
-    print("ok!")
+        return node.edge
