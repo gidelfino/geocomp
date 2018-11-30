@@ -22,7 +22,7 @@ class SweepLineEdge:
             self.b = b
 
     def __lt__(self, other):
-        return left(other.a, other.b, self.a) and left(other.a, other.b, self.b) or right(self.a, self.b, other.a) and right(self.a, self.b, other.b)
+        return left(other.a, other.b, self.b)
 
     def __eq__(self, other):
         return self.a == other.a and self.b == other.b
