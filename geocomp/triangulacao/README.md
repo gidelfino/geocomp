@@ -52,3 +52,7 @@ Diagonais verdes são as outras diagonais da triangulação, inseridas pelo algo
 ### Referências
 
 [1] Mark de Berg, Otfried Cheong, Marc van Kreveld, and Mark Overmars. 2008. Computational Geometry: Algorithms and Applications (3rd ed. ed.). TELOS, Santa Clara, CA, USA.
+
+## Etc
+
+O número que aparece ao lado do nome dos algoritmos é o número de chamadas à primitiva area2. Apesar de parecer determinístico, o algoritmo de Lee e Preparata tem um número variado, pois a ABB usada possui um esquema de balanceamento aleatório.
