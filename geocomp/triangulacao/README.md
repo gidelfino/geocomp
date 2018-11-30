@@ -38,10 +38,11 @@ adicionadas conforme vão sendo encontradas. Para adicionar a diagonal vw, itera
 
 ### Animação
 
-A linha de varredura é a linha verde que desce pelo polígono. Os triângulos amarelos representam testes de esquerda, provenientes de comparações na ABB e da identificação
-de vértices.
+A linha de varredura é a linha verde que desce pelo polígono. 
 
-Quando se analisa a animação passo a passo, alguns triângulos permanecem desenhados por mais de um passo. Isso acontece na identificação dos vértices. Se um vértice falha no teste de ponta para baixo (que faz um teste de esquerda), ele é testado como ponta para cima (que faz outro teste de esquerda).
+Os triângulos amarelos representam testes de esquerda provenientes de comparações na ABB. 
+
+Um triângulo azul claro é um teste de esquerda realizado na identificação de um vértice (se é ponta para cima ou para baixo).
 
 Arestas roxas são arestas do polígono que fazem parte da linha de varredura.
 

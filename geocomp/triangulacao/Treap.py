@@ -3,6 +3,7 @@
 
 import random
 from geocomp.common.guiprim import left as esquerda
+from geocomp.common.guiprim import control
 from geocomp.common.segment import Segment
 
 def random_integer():
@@ -10,9 +11,11 @@ def random_integer():
 
 def AcendeAresta(e):
     Segment(e.a, e.b).hilight(color_line='purple')
+    control.sleep()
 
 def ApagaAresta(e):
     Segment(e.a, e.b).hilight(color_line='red')
+    control.sleep()
 
 class TreapNode:
     def __init__(self, edge, priority):
@@ -53,10 +56,10 @@ class Treap:
             return left
 
     def insert(self, edge, key):
-        AcendeAresta(edge)
         node = TreapNode(edge, random_integer())
         left, right = self._split(self._root, key)
         self._root = self._merge(self._merge(left, node), right)
+        AcendeAresta(edge)
 
     def _erase_r(self, tree, edge, key):
         if edge == tree.edge:
@@ -69,8 +72,8 @@ class Treap:
             return tree
 
     def erase(self, edge, key):
-        ApagaAresta(edge)
         self._root = self._erase_r(self._root, edge, key)
+        ApagaAresta(edge)
 
     def _lower_bound_r(self, tree, key):
         if tree == None:

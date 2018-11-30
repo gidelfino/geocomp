@@ -3,11 +3,28 @@
 from geocomp.common.polygon import Polygon
 from geocomp.common.segment import Segment
 from geocomp.common.guiprim import *
+from geocomp.common.prim import left as left_nogui
 from functools import cmp_to_key
 from geocomp.triangulacao.Treap import Treap
 from geocomp.triangulacao.DCEL import DCEL
 from geocomp.common.control import *
 from geocomp.triangulacao.ymonotono import YMonotono
+
+def PiscaTriangulo(a, b, c):
+    "desenha  (e apaga) os lados do triangulo abc"
+    color = 'cyan'
+    a.lineto (c, color)
+    b.lineto (a, color)
+    c.lineto (b, color)
+    control.thaw_update ()
+    control.update ()
+    control.freeze_update ()
+
+    control.sleep ()
+
+    a.remove_lineto (c)
+    b.remove_lineto (a)
+    c.remove_lineto (b)
 
 def MostraDiagonal(p, q):
     Segment(p, q).hilight(color_line='white')
@@ -54,25 +71,25 @@ def Start(v):
     "Um vertice v eh start se seus dois vizinhos estao abaixo e o angulo interior em v eh < pi"
     u = v.prev
     w = v.next
-    return Below(u, v) and Below(w, v) and left(v, w, u)
+    return Below(u, v) and Below(w, v) and left_nogui(v, w, u)
 
 def End(v):
     "Um vertice v eh end se seus dois vizinhos estao acima e o angulo interior em v eh < pi"
     u = v.prev
     w = v.next
-    return Above(u, v) and Above(w, v) and left(v, w, u)
+    return Above(u, v) and Above(w, v) and left_nogui(v, w, u)
 
 def Split(v):
     "Um vertice v eh split se seus dois vizinhos estao abaixo e o angulo interior em v eh > pi"
     u = v.prev
     w = v.next
-    return Below(u, v) and Below(w, v) and not left(v, w, u)
+    return Below(u, v) and Below(w, v) and not left_nogui(v, w, u)
 
 def Merge(v):
     "Um vertice v eh merge se seus dois vizinhos estao acima e o angulo interior em v eh > pi"
     u = v.prev
     w = v.next
-    return Above(u, v) and Above(w, v) and not left(v, w, u)
+    return Above(u, v) and Above(w, v) and not left_nogui(v, w, u)
 
 def HandleStartVertex(v, helper, T, D):
     e = SweepLineEdge(v, v.next)
@@ -155,6 +172,7 @@ def LeePreparata(l):
     helper = {}
     for p in Q:
         sweep_id = MostraSweep(p)
+        PiscaTriangulo(p.prev, p, p.next)
         if Start(p):
             HandleStartVertex(p, helper, T, D)
         elif End(p):
