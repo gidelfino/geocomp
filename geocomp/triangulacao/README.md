@@ -54,6 +54,8 @@ Diagonais brancas são as diagonais da partição em polígonos monótonos (que 
 
 Diagonais verdes são as outras diagonais da triangulação, inseridas pelo algoritmo de y-monótono.
 
+Os polígonos monótonos possuem aresta roxas na fase do y-monótono.
+
 ### Referências
 
 [1] Mark de Berg, Otfried Cheong, Marc van Kreveld, and Mark Overmars. 2008. Computational Geometry: Algorithms and Applications (3rd ed. ed.). TELOS, Santa Clara, CA, USA.
