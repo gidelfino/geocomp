@@ -21,6 +21,10 @@ Uma diagonal da triangulação é verde.
 
 ## Y-Monótono
 
+O algoritmo de triangulação de polígonos Y monótonos recebe uma lista de pontos que representam um polígono, pontos estes que são dados no sentido anti-horário. O algoritmo ordena os pontos decrescente por y e crescente por x, e por isso assume que esse mesmo critério foi usado na etapa de inserção de diagonais no algoritmo de Lee e Preparata mencionado abaixo.
+
+As diagonais inseridas nessa etapa tem cor verde e o polígono em questão (quando há mais de um) fica evidenciado em roxo, para que fique mais fácil de se localizar quando o polígono original gera vários polígonos y-monótonos.
+
 ## Lee e Preparata
 
 O algoritmo de Lee e Preparata particiona o polígono em vários polígonos y-monótonos. Depois triangula-se
