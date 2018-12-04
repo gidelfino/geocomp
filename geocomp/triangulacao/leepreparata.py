@@ -162,6 +162,20 @@ def Events(poly, n):
     Q.sort(key = cmp_to_key(cmp))
     return Q
 
+def TriangulaYMonotono(poly):
+    n = len(poly)
+    for i in range(n):
+        poly[i].lineto(poly[(i + 1) % n], 'purple')
+        control.thaw_update ()
+    control.update ()
+    control.freeze_update ()
+    control.sleep ()
+
+    YMonotono(poly, print_polygon=False)
+
+    for i in range(n):
+        poly[i].remove_lineto(poly[(i + 1) % n])
+
 def LeePreparata(l):
     poly = Polygon(l)
     poly.plot()
@@ -186,4 +200,7 @@ def LeePreparata(l):
         EscondeSweep(sweep_id)
 
     for poly in D.to_polygons():
-        YMonotono(poly, print_polygon=False)
+        TriangulaYMonotono(poly)
+
+
+        

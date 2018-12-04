@@ -9,7 +9,6 @@ from functools import *
 from math import *
 
 def is_adj(ia, ib, n):
-    # print('Adj ', ia, ' ', ib)
     if (ia == ib + 1 or ia == ib - 1):
         return True
     if (ia == 0 and ib == n - 1):
@@ -19,8 +18,8 @@ def is_adj(ia, ib, n):
     return False
 
 def mostra_diagonal(v, w):
-    print(v.x, ' ', v.y, ' ', w.x, ' ', w.y)
     Segment(v, w).hilight()
+    control.sleep()
 
 def YMonotono (l, print_polygon = True):
     "Algoritmo Triangulacao de Poligono Y-Monotono para uma lista l de pontos"
@@ -38,20 +37,15 @@ def YMonotono (l, print_polygon = True):
 
     poly_on_left = (p[1] + 1) % n == p[0]
     
-    for i in range (0, len(l)):
-        # print(l[p[i]].x, ' ', l[p[i]].y)
-        print(p[i], ' ')
     st = [0] * (n + 1)
     sz = 0
     for i in range(0, n):
-        print('=================Ponto ', p[i], ' ===============================')
         if sz <= 1:
             st[sz] = p[i]
             sz += 1
         else:
             b = st[sz - 1]
             f = st[0]
-            print('back ', b, ' front ', f)
             if (is_adj(p[i], b, n) and not is_adj(p[i], f, n)):
                 print('Case 1')
                 while (sz > 1):
@@ -78,14 +72,11 @@ def YMonotono (l, print_polygon = True):
                 sz += 1
                 st[sz] = p[i]
                 sz += 1
-            # elif (is_adj(p[i], f, n) and is_adj(p[i], b, n)):
             else:
                 print('Case 3')
-                # sz -= 1
                 while (sz > 2):
                     sz = sz - 1
                     mostra_diagonal(l[p[i]], l[st[sz - 1]])
-
 
 
 
